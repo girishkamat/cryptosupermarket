@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^1.2.3",
+    "axios": "^0.18.0",
+    "mobx": "^5.0.3",
+    "mobx-react": "^5.2.3",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-scripts": "1.1.4"
@@ -16,10 +20,10 @@
     "build-storybook": "build-storybook -s public"
   },
   "devDependencies": {
-    "@storybook/react": "^4.0.0-alpha.9",
     "@storybook/addon-actions": "^4.0.0-alpha.9",
     "@storybook/addon-links": "^4.0.0-alpha.9",
     "@storybook/addons": "^4.0.0-alpha.9",
+    "@storybook/react": "^4.0.0-alpha.9",
     "babel-core": "^7.0.0-bridge.0",
     "babel-runtime": "^7.0.0-beta.3"
   }

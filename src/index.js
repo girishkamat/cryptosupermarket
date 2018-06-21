@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
+import CryptoModel from './cryptoModel'
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const cryptoModel = new CryptoModel()
+
+ReactDOM.render(<App cryptoModel={cryptoModel}/>, document.getElementById('root'));
 registerServiceWorker();
+

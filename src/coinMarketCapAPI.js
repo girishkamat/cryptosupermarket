@@ -4,7 +4,7 @@ class CoinMarketCapAPI {
     url = "https://mockcoinmarketcap.herokuapp.com"
 
     listingsWithPrices(currency, start, limit) {
-        return axios.get(`${url}/v2/ticker/?structure=array&start=${start}&limit=${limit}&convert=${currency}`)         
+        return axios.get(`${this.url}/v2/ticker/?structure=array&start=${start}&limit=${limit}&convert=${currency}`)         
     }
 }
 

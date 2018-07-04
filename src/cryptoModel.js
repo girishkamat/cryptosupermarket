@@ -1,5 +1,5 @@
 import {decorate, observable, action} from 'mobx'
-import coinMarketCapAPI from './CoinMarketCapAPI'
+import coinMarketCapAPI from './coinMarketCapAPI'
 
 class CryptoModel {
     currentTab = 0

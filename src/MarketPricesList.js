@@ -5,8 +5,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { observer } from 'mobx-react';
-import PropTypes from 'prop-types';
-import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -15,7 +13,7 @@ const MarketPricesList = observer(
     class MarketPricesList extends Component {
 
         getUpOrDownColor = (value) => {
-            return { color: value >= 0 ? 'green' : 'red' }
+            return value >= 0 ? this.props.classes.green : this.props.classes.red
         }
 
         render() {
@@ -40,16 +38,16 @@ const MarketPricesList = observer(
                                     <ListItemText primary={crypto.name} secondary={crypto.symbol} />
                                 </ListItem>
                             </TableCell>
-                            <TableCell numeric style={{ ...this.getUpOrDownColor(crypto.quotes[this.props.cryptoModel.currency].percent_change_24h) }}>
+                            <TableCell numeric className={this.getUpOrDownColor(crypto.quotes[this.props.cryptoModel.currency].percent_change_24h)}>
                                 {crypto.quotes[this.props.cryptoModel.currency].price}
                             </TableCell>
-                            <TableCell numeric style={{ ...this.getUpOrDownColor(crypto.quotes[this.props.cryptoModel.currency].percent_change_1h) }}>
+                            <TableCell numeric className={this.getUpOrDownColor(crypto.quotes[this.props.cryptoModel.currency].percent_change_1h)}>
                                 {crypto.quotes[this.props.cryptoModel.currency].percent_change_1h}
                             </TableCell>
-                            <TableCell numeric style={{ ...this.getUpOrDownColor(crypto.quotes[this.props.cryptoModel.currency].percent_change_24h) }}>
+                            <TableCell numeric className={this.getUpOrDownColor(crypto.quotes[this.props.cryptoModel.currency].percent_change_24h)}>
                                 {crypto.quotes[this.props.cryptoModel.currency].percent_change_24h}
                             </TableCell>
-                            <TableCell numeric style={{ ...this.getUpOrDownColor(crypto.quotes[this.props.cryptoModel.currency].percent_change_7d) }}>{crypto.quotes[this.props.cryptoModel.currency].percent_change_7d}</TableCell>
+                            <TableCell numeric className={this.getUpOrDownColor(crypto.quotes[this.props.cryptoModel.currency].percent_change_7d)}>{crypto.quotes[this.props.cryptoModel.currency].percent_change_7d}</TableCell>
                         </TableRow>)}
                 </TableBody>
             </Table>)

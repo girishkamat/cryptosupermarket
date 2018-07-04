@@ -1,9 +1,10 @@
 import {decorate, observable, action} from 'mobx'
-import coinMarketCapAPI from './coinMarketCapAPI'
+import coinMarketCapAPI from './CoinMarketCapAPI'
 
 class CryptoModel {
     currentTab = 0
     listings = []
+    numOfCryptos = 0
     currency = "EUR"
     start = 1
     limit = 20
@@ -16,7 +17,11 @@ class CryptoModel {
     }
 
     nextPage = () => {
-        this.start = this.start + this.limit;
+        let newStart = this.start + this.limit;
+        if(newStart >= this.numOfCryptos) {
+           return     
+        }
+        this.start = newStart
         return this.listingsWithPrices()
         .then((response) => {
             this.listings = this.listings.concat(response.data.data)
@@ -32,7 +37,7 @@ class CryptoModel {
         return this.listingsWithPrices()
         .then((response) => {
             this.listings.replace(response.data.data)
-            console.log(this.listings)
+            this.numOfCryptos = response.data.metadata.num_cryptocurrencies
         })
         .catch(function (error) {
             console.log(error);

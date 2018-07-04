@@ -17,6 +17,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import MarketPricesList from './MarketPricesList';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import purple from '@material-ui/core/colors/purple';
 
 const styles = {
   root: {
@@ -29,7 +31,20 @@ const styles = {
     marginLeft: -12,
     marginRight: 20,
   },
+  green: {
+    color: 'green'
+  },
+  red: {
+    color: 'red'
+  }
 };
+
+const theme = createMuiTheme({
+  palette: {
+    primary: { main: purple[500] }, // Purple and green play nicely together.
+    secondary: { main: '#11cb5f' }, // This is just green.A700 as hex.
+  },
+});
 
 const App = observer(
 
@@ -65,7 +80,7 @@ const App = observer(
     render() {
       const { classes } = this.props;
       return (
-        <div>
+        <MuiThemeProvider theme={theme}>
           <AppBar position="static">
             <Tabs
               value={this.props.cryptoModel.currentTab}
@@ -121,15 +136,14 @@ const App = observer(
               </Paper>
             </div>
           }
-        </div>
+        </MuiThemeProvider>
       );
     }
   }
 );
 
 App.propTypes = {
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles, { withTheme: true })(App);
+export default withStyles(styles)(App);

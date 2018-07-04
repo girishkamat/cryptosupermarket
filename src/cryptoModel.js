@@ -19,7 +19,7 @@ class CryptoModel {
         this.start = this.start + this.limit;
         return this.listingsWithPrices()
         .then((response) => {
-            this.listings.concat(response.data.data)
+            this.listings = this.listings.concat(response.data.data)
         })
         .catch(function (error) {
             console.log(error);

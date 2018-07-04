@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/v2/ticker/?structure=array&start=11&limit=10&convert=EUR"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "coinmarketcapapi-ticket-11-10-EUR.json",
+    "headers": {
+      "Content-Type": "application/json",
+      "access-control-allow-origin": "*"
+    },
+    "transformers": ["response-template"]
+  }
+}

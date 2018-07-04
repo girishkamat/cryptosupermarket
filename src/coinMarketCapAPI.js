@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 class CoinMarketCapAPI {
-    fetchListings() {
-        return axios.get('https://api.coinmarketcap.com/v2/listings/')         
+    listingsWithPrices(currency, start, limit) {
+        return axios.get(`http://localhost:9000/v2/ticker/?structure=array&start=${start}&limit=${limit}&convert=${currency}`)         
     }
 }
 

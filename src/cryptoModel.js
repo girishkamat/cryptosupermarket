@@ -1,9 +1,11 @@
 import {decorate, observable, action} from 'mobx'
 import coinMarketCapAPI from './coinMarketCapAPI'
+import cryptoControlIOAPI from './cryptoControlIOAPI'
 
 class CryptoModel {
     currentTab = 0
     listings = []
+    news = []
     numOfCryptos = 0
     currency = "EUR"
     start = 1
@@ -12,6 +14,12 @@ class CryptoModel {
     menuOpen = false
     sortMenuAnchorEl = null
     sortMenuOpen = false
+
+    fetchNews = () => {
+        return cryptoControlIOAPI.fetchNews().then(response => {
+            this.news.replace(response.data.slice(0,10))
+        })
+    }
 
     listingsWithPrices = () => {
         return coinMarketCapAPI
@@ -54,6 +62,7 @@ class CryptoModel {
 decorate(CryptoModel, {
     currentTab: observable,
     listings: observable, 
+    news: observable,
     currency: observable, 
     menuOpen: observable,
     sortMenuOpen: observable,

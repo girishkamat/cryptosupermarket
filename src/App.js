@@ -25,7 +25,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
-
+//addbeee4c2bc829e3659db04f27c257d
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -74,6 +74,7 @@ const App = observer(
 
     componentDidMount() {
       this.props.cryptoModel.reload()
+      this.props.cryptoModel.fetchNews()
     }
 
     handleScroll = (e) => {
@@ -189,22 +190,23 @@ const App = observer(
             </div>
           }
           {this.props.cryptoModel.currentTab === 1 && <Paper>
-            <Card className={classes.card}>
-              <CardMedia
-                className={classes.media}
-                image="/contemplative-reptile.jpg"
-                title="Contemplative Reptile"
-              />
-              <CardContent>
-              <Typography gutterBottom variant="headline" component="h2">
-                News title <Button variant="outlined" color="primary" aria-label="add" href="#text">More</Button>
-              </Typography>
-              <Typography component="p">
-                Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-                across all continents except Antarctica 
-              </Typography>
-            </CardContent>
-            </Card>
+            {this.props.cryptoModel.news.map((n) => 
+              <Card className={classes.card}>
+                <CardMedia
+                  className={classes.media}
+                  image={n.originalImageUrl}
+                  title="Contemplative Reptile"
+                />
+                <CardContent>
+                <Typography gutterBottom variant="headline" component="h2">
+                  {n.title}<Button variant="outlined" color="primary" aria-label="add" href={n.url} size="small">More</Button>
+                </Typography>
+                <Typography component="p">
+                  {n.description}
+                </Typography>
+              </CardContent>
+              </Card>)
+            }
           </Paper>
           }
         </MuiThemeProvider>

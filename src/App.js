@@ -13,14 +13,20 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import AddIcon from '@material-ui/icons/Add';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import MarketPricesList from './MarketPricesList';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import purple from '@material-ui/core/colors/purple';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Button from '@material-ui/core/Button';
 
-const styles = {
+const styles = theme => ({
   root: {
     flexGrow: 1,
   },
@@ -36,8 +42,24 @@ const styles = {
   },
   red: {
     color: 'red'
-  }
-};
+  },
+  card: {
+    minWidth: 400,
+    maxWidth: 700,
+    backgroundPosition: 'center',
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    marginLeft: 'auto',
+    marginRight: 'auto'
+  },
+  media: {
+    height: 0,
+    paddingTop: '56.25%', // 16:9
+  },
+  button: {
+    margin: theme.spacing.unit,
+  },
+});
 
 const theme = createMuiTheme({
   palette: {
@@ -64,10 +86,16 @@ const App = observer(
     handleChange = (cryptoId) => {
       this.props.cryptoModel.expanded = cryptoId
     }
-    
+
     handleMenu = event => {
       this.props.cryptoModel.anchorEl = event.currentTarget
       this.props.cryptoModel.menuOpen = true
+
+    };
+
+    handleSortMenu = event => {
+      this.props.cryptoModel.sortMenuAnchorEl = event.currentTarget
+      this.props.cryptoModel.sortMenuOpen = true
     };
 
     handleClose = event => {
@@ -75,6 +103,12 @@ const App = observer(
       this.props.cryptoModel.menuOpen = false
       this.props.cryptoModel.currency = event.currentTarget.textContent
       this.props.cryptoModel.reload()
+    };
+
+    handleSortMenuClose = event => {
+      console.log(event.currentTarget.textContent)
+      this.props.cryptoModel.sortMenuAnchorEl = null
+      this.props.cryptoModel.sortMenuOpen = false
     };
 
     render() {
@@ -95,11 +129,29 @@ const App = observer(
             <div>
               <AppBar position="static">
                 <Toolbar>
-                  <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
-                    <MenuIcon />
-                  </IconButton>
+                  <div>
+                    <IconButton
+                      aria-owns={this.props.cryptoModel.sortMenuOpen ? 'sort-menu' : null}
+                      className={classes.menuButton}
+                      aria-haspopup="true"
+                      color="inherit"
+                      onClick={this.handleSortMenu}>
+                      <MenuIcon />
+                    </IconButton>
+                    <Menu
+                      id="sort-menu"
+                      anchorEl={this.props.cryptoModel.sortMenuAnchorEl}
+                      open={this.props.cryptoModel.sortMenuOpen}
+                      onClose={this.handleSortMenuClose}
+                    >
+                      <MenuItem onClick={this.handleSortMenuClose}>Sort Price</MenuItem>
+                      <MenuItem onClick={this.handleSortMenuClose}>Sort Change1h</MenuItem>
+                      <MenuItem onClick={this.handleSortMenuClose}>Sort Change24h</MenuItem>
+                      <MenuItem onClick={this.handleSortMenuClose}>Sort Change7d</MenuItem>
+                    </Menu>
+                  </div>
                   <Typography variant="title" color="inherit" className={classes.flex}>
-                    Current Prices - {this.props.cryptoModel.currency}
+                    {this.props.cryptoModel.currency} Prices
                   </Typography>
                   <div>
                     <IconButton
@@ -132,9 +184,28 @@ const App = observer(
                 </Toolbar>
               </AppBar>
               <Paper style={{ maxHeight: 750, overflow: 'auto' }} onScroll={this.handleScroll.bind(this)}>
-                <MarketPricesList {...this.props}/>
+                <MarketPricesList {...this.props} />
               </Paper>
             </div>
+          }
+          {this.props.cryptoModel.currentTab === 1 && <Paper>
+            <Card className={classes.card}>
+              <CardMedia
+                className={classes.media}
+                image="/contemplative-reptile.jpg"
+                title="Contemplative Reptile"
+              />
+              <CardContent>
+              <Typography gutterBottom variant="headline" component="h2">
+                News title <Button variant="outlined" color="primary" aria-label="add" href="#text">More</Button>
+              </Typography>
+              <Typography component="p">
+                Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
+                across all continents except Antarctica 
+              </Typography>
+            </CardContent>
+            </Card>
+          </Paper>
           }
         </MuiThemeProvider>
       );

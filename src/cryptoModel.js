@@ -8,8 +8,10 @@ class CryptoModel {
     currency = "EUR"
     start = 1
     limit = 20
-    menuOpen = false
     anchorEl = null
+    menuOpen = false
+    sortMenuAnchorEl = null
+    sortMenuOpen = false
 
     listingsWithPrices = () => {
         return coinMarketCapAPI
@@ -54,6 +56,7 @@ decorate(CryptoModel, {
     listings: observable, 
     currency: observable, 
     menuOpen: observable,
+    sortMenuOpen: observable,
     reload: action,
     nextPage: action,
     handleTabChange: action})

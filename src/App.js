@@ -13,19 +13,14 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import AddIcon from '@material-ui/icons/Add';
+import NewsList from './newsList';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import MarketPricesList from './MarketPricesList';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import purple from '@material-ui/core/colors/purple';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Button from '@material-ui/core/Button';
-//addbeee4c2bc829e3659db04f27c257d
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -37,10 +32,10 @@ const styles = theme => ({
     marginLeft: -12,
     marginRight: 20,
   },
-  green: {
+  valueUp: {
     color: 'green'
   },
-  red: {
+  valueDown: {
     color: 'red'
   },
   card: {
@@ -84,11 +79,7 @@ const App = observer(
       }
     }
 
-    handleChange = (cryptoId) => {
-      this.props.cryptoModel.expanded = cryptoId
-    }
-
-    handleMenu = event => {
+    handleCurrencyMenu = event => {
       this.props.cryptoModel.anchorEl = event.currentTarget
       this.props.cryptoModel.menuOpen = true
 
@@ -99,11 +90,13 @@ const App = observer(
       this.props.cryptoModel.sortMenuOpen = true
     };
 
-    handleClose = event => {
+    handleCurrencyMenuClose = event => {
       this.props.cryptoModel.anchorEl = null
       this.props.cryptoModel.menuOpen = false
-      this.props.cryptoModel.currency = event.currentTarget.textContent
-      this.props.cryptoModel.reload()
+      if(event.currentTarget.textContent) {
+        this.props.cryptoModel.currency = event.currentTarget.textContent
+        this.props.cryptoModel.reload()
+      }
     };
 
     handleSortMenuClose = event => {
@@ -158,7 +151,7 @@ const App = observer(
                     <IconButton
                       aria-owns={this.props.cryptoModel.menuOpen ? 'menu-appbar' : null}
                       aria-haspopup="true"
-                      onClick={this.handleMenu}
+                      onClick={this.handleCurrencyMenu}
                       color="inherit"
                     >
                       <FilterListIcon />
@@ -175,11 +168,11 @@ const App = observer(
                         horizontal: 'right',
                       }}
                       open={this.props.cryptoModel.menuOpen}
-                      onClose={this.handleClose}
+                      onClose={this.handleCurrencyMenuClose}
                     >
-                      <MenuItem onClick={this.handleClose}>USD</MenuItem>
-                      <MenuItem onClick={this.handleClose}>GBP</MenuItem>
-                      <MenuItem onClick={this.handleClose}>EUR</MenuItem>
+                      <MenuItem onClick={this.handleCurrencyMenuClose}>USD</MenuItem>
+                      <MenuItem onClick={this.handleCurrencyMenuClose}>GBP</MenuItem>
+                      <MenuItem onClick={this.handleCurrencyMenuClose}>EUR</MenuItem>
                     </Menu>
                   </div>
                 </Toolbar>
@@ -189,25 +182,7 @@ const App = observer(
               </Paper>
             </div>
           }
-          {this.props.cryptoModel.currentTab === 1 && <Paper>
-            {this.props.cryptoModel.news.map((n) => 
-              <Card className={classes.card}>
-                <CardMedia
-                  className={classes.media}
-                  image={n.originalImageUrl}
-                  title="Contemplative Reptile"
-                />
-                <CardContent>
-                <Typography gutterBottom variant="headline" component="h2">
-                  {n.title}<Button variant="outlined" color="primary" aria-label="add" href={n.url} size="small">More</Button>
-                </Typography>
-                <Typography component="p">
-                  {n.description}
-                </Typography>
-              </CardContent>
-              </Card>)
-            }
-          </Paper>
+          {this.props.cryptoModel.currentTab === 1 && <Paper><NewsList {...this.props}/></Paper>
           }
         </MuiThemeProvider>
       );

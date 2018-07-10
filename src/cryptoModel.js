@@ -1,5 +1,5 @@
 import {decorate, observable, action} from 'mobx'
-import coinMarketCapAPI from './coinMarketCapAPI'
+import cryptoSupermarketBackendAPI from './cryptoSupermarketBackendAPI'
 import cryptoControlIOAPI from './cryptoControlIOAPI'
 
 class CryptoModel {
@@ -22,7 +22,7 @@ class CryptoModel {
     }
 
     listingsWithPrices = () => {
-        return coinMarketCapAPI
+        return cryptoSupermarketBackendAPI
         .listingsWithPrices(this.currency, this.start, this.limit)       
     }
 

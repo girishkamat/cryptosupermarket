@@ -12,8 +12,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 const MarketPricesList = observer(
     class MarketPricesList extends Component {
 
-        getUpOrDownColor = (value) => {
-            return value >= 0 ? this.props.classes.green : this.props.classes.red
+        valueUpDownClass = (value) => {
+            return value >= 0 ? this.props.classes.valueUp : this.props.classes.valueDown
         }
 
         render() {
@@ -28,7 +28,7 @@ const MarketPricesList = observer(
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {this.props.cryptoModel.listings.map((crypto) => crypto.quotes[this.props.cryptoModel.currency] &&
+                    {this.props.cryptoModel.listings.map(crypto => crypto.quotes[this.props.cryptoModel.currency] &&
                         <TableRow key={crypto.id}>
                             <TableCell component="th" scope="row">
                                 <ListItem>
@@ -38,16 +38,16 @@ const MarketPricesList = observer(
                                     <ListItemText primary={crypto.name} secondary={crypto.symbol} />
                                 </ListItem>
                             </TableCell>
-                            <TableCell numeric className={this.getUpOrDownColor(crypto.quotes[this.props.cryptoModel.currency].percent_change_24h)}>
+                            <TableCell numeric className={this.valueUpDownClass(crypto.quotes[this.props.cryptoModel.currency].percent_change_24h)}>
                                 {crypto.quotes[this.props.cryptoModel.currency].price}
                             </TableCell>
-                            <TableCell numeric className={this.getUpOrDownColor(crypto.quotes[this.props.cryptoModel.currency].percent_change_1h)}>
+                            <TableCell numeric className={this.valueUpDownClass(crypto.quotes[this.props.cryptoModel.currency].percent_change_1h)}>
                                 {crypto.quotes[this.props.cryptoModel.currency].percent_change_1h}
                             </TableCell>
-                            <TableCell numeric className={this.getUpOrDownColor(crypto.quotes[this.props.cryptoModel.currency].percent_change_24h)}>
+                            <TableCell numeric className={this.valueUpDownClass(crypto.quotes[this.props.cryptoModel.currency].percent_change_24h)}>
                                 {crypto.quotes[this.props.cryptoModel.currency].percent_change_24h}
                             </TableCell>
-                            <TableCell numeric className={this.getUpOrDownColor(crypto.quotes[this.props.cryptoModel.currency].percent_change_7d)}>{crypto.quotes[this.props.cryptoModel.currency].percent_change_7d}</TableCell>
+                            <TableCell numeric className={this.valueUpDownClass(crypto.quotes[this.props.cryptoModel.currency].percent_change_7d)}>{crypto.quotes[this.props.cryptoModel.currency].percent_change_7d}</TableCell>
                         </TableRow>)}
                 </TableBody>
             </Table>)

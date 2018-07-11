@@ -24,6 +24,9 @@ import Autosuggest from 'react-autosuggest';
 import TextField from '@material-ui/core/TextField';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 
 const styles = theme => ({
   root: {
@@ -103,6 +106,7 @@ function renderInput(inputProps) {
 }
 
 function getSuggestions(suggestions, value) {
+  console.log(suggestions)
   const inputValue = value.trim().toLowerCase();
   const inputLength = inputValue.length;
   let count = 0;
@@ -138,23 +142,14 @@ function getSuggestionValue(suggestion) {
 function renderSuggestion(suggestion, { query, isHighlighted }) {
   const matches = match(suggestion.label, query);
   const parts = parse(suggestion.label, matches);
-
+  console.log(suggestion)
   return (
-    <MenuItem selected={isHighlighted} component="div">
-      <div>
-        {parts.map((part, index) => {
-          return part.highlight ? (
-            <span key={String(index)} style={{ fontWeight: 500 }}>
-              {part.text}
-            </span>
-          ) : (
-            <strong key={String(index)} style={{ fontWeight: 300 }}>
-              {part.text}
-            </strong>
-          );
-        })}
-      </div>
-    </MenuItem>
+    <ListItem>
+       <ListItemIcon>
+          <img alt={suggestion.symbol} src={`https://s2.coinmarketcap.com/static/img/coins/16x16/${suggestion.id}.png`} />
+       </ListItemIcon>
+      <ListItemText primary={suggestion.label} secondary={suggestion.symbol} />
+    </ListItem>
   );
 }
 
@@ -268,7 +263,7 @@ const App = observer(
                         renderSuggestion={renderSuggestion}
                         inputProps={{
                           classes,
-                          placeholder: '',
+                          placeholder: 'type to filter....',
                           value: this.props.cryptoModel.autoCompleteValue,
                           onChange: this.handleChange,
                         }}

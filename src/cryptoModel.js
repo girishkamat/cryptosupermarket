@@ -29,7 +29,7 @@ class CryptoModel {
         return cryptoSupermarketBackendAPI
         .listings().then(response => {
             this.listings.replace(response.data.data)
-            this.listings.forEach(l => this.autoCompleteSuggestions.push({label: l.symbol}))
+            this.listings.forEach(l => this.autoCompleteSuggestions.push({label: l.name, id: l.id, symbol: l.symbol}))
         })      
     }
 

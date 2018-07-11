@@ -20,6 +20,10 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import MarketPricesList from './MarketPricesList';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import purple from '@material-ui/core/colors/purple';
+import Autosuggest from 'react-autosuggest';
+import TextField from '@material-ui/core/TextField';
+import match from 'autosuggest-highlight/match';
+import parse from 'autosuggest-highlight/parse';
 
 const styles = theme => ({
   root: {
@@ -54,14 +58,105 @@ const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
   },
+  container: {
+    flexGrow: 1,
+    position: 'relative'
+  },
+  suggestionsContainerOpen: {
+    position: 'absolute',
+    zIndex: 1,
+    marginTop: theme.spacing.unit,
+    left: 0,
+    right: 0,
+  },
+  suggestion: {
+    display: 'block',
+  },
+  suggestionsList: {
+    margin: 0,
+    padding: 0,
+    listStyleType: 'none',
+  },
+  input: {
+    background: 'white'
+  }
 });
 
 const theme = createMuiTheme({
-  palette: {
-    primary: { main: purple[500] }, // Purple and green play nicely together.
-    secondary: { main: '#11cb5f' }, // This is just green.A700 as hex.
-  },
 });
+
+function renderInput(inputProps) {
+  const { classes, ref, ...other } = inputProps;
+
+  return (
+    <TextField
+      fullWidth
+      InputProps={{
+        inputRef: ref,
+        classes: {
+          input: classes.input,
+        },
+        ...other,
+      }}
+    />
+  );
+}
+
+function getSuggestions(suggestions, value) {
+  const inputValue = value.trim().toLowerCase();
+  const inputLength = inputValue.length;
+  let count = 0;
+
+  return inputLength === 0
+    ? []
+    : suggestions.filter(suggestion => {
+        const keep =
+          count < 5 && suggestion.label.toLowerCase().slice(0, inputLength) === inputValue;
+
+        if (keep) {
+          count += 1;
+        }
+
+        return keep;
+      });
+}
+
+function renderSuggestionsContainer(options) {
+  const { containerProps, children } = options;
+
+  return (
+    <Paper {...containerProps} square>
+      {children}
+    </Paper>
+  );
+}
+
+function getSuggestionValue(suggestion) {
+  return suggestion.label;
+}
+
+function renderSuggestion(suggestion, { query, isHighlighted }) {
+  const matches = match(suggestion.label, query);
+  const parts = parse(suggestion.label, matches);
+
+  return (
+    <MenuItem selected={isHighlighted} component="div">
+      <div>
+        {parts.map((part, index) => {
+          return part.highlight ? (
+            <span key={String(index)} style={{ fontWeight: 500 }}>
+              {part.text}
+            </span>
+          ) : (
+            <strong key={String(index)} style={{ fontWeight: 300 }}>
+              {part.text}
+            </strong>
+          );
+        })}
+      </div>
+    </MenuItem>
+  );
+}
 
 const App = observer(
 
@@ -69,15 +164,16 @@ const App = observer(
 
     componentDidMount() {
       this.props.cryptoModel.reload()
+      this.props.cryptoModel.fetchListings()
       this.props.cryptoModel.fetchNews()
     }
 
-    handleScroll = (e) => {
+    handleScroll = e => {
       const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
       if (bottom) {
         this.props.cryptoModel.nextPage();
       }
-    }
+    };
 
     handleCurrencyMenu = event => {
       this.props.cryptoModel.anchorEl = event.currentTarget
@@ -100,9 +196,20 @@ const App = observer(
     };
 
     handleSortMenuClose = event => {
-      console.log(event.currentTarget.textContent)
       this.props.cryptoModel.sortMenuAnchorEl = null
       this.props.cryptoModel.sortMenuOpen = false
+    };
+
+    handleSuggestionsFetchRequested = ({ value }) => {
+      this.props.cryptoModel.suggestions = getSuggestions(this.props.cryptoModel.autoCompleteSuggestions,value);
+    };
+
+    handleSuggestionsClearRequested = () => {
+      this.props.cryptoModel.suggestions.clear();
+    };
+
+    handleChange = (event, { newValue }) => {
+      this.props.cryptoModel.autoCompleteValue = newValue;
     };
 
     render() {
@@ -144,9 +251,29 @@ const App = observer(
                       <MenuItem onClick={this.handleSortMenuClose}>Sort Change7d</MenuItem>
                     </Menu>
                   </div>
-                  <Typography variant="title" color="inherit" className={classes.flex}>
-                    {this.props.cryptoModel.currency} Prices
-                  </Typography>
+                  <div className={classes.flex}>
+                    <Autosuggest
+                        theme={{
+                          container: classes.container,
+                          suggestionsContainerOpen: classes.suggestionsContainerOpen,
+                          suggestionsList: classes.suggestionsList,
+                          suggestion: classes.suggestion,
+                        }}
+                        renderInputComponent={renderInput}
+                        suggestions={this.props.cryptoModel.suggestions}
+                        onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
+                        onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
+                        renderSuggestionsContainer={renderSuggestionsContainer}
+                        getSuggestionValue={getSuggestionValue}
+                        renderSuggestion={renderSuggestion}
+                        inputProps={{
+                          classes,
+                          placeholder: '',
+                          value: this.props.cryptoModel.autoCompleteValue,
+                          onChange: this.handleChange,
+                        }}
+                      />
+                  </div>
                   <div>
                     <IconButton
                       aria-owns={this.props.cryptoModel.menuOpen ? 'menu-appbar' : null}

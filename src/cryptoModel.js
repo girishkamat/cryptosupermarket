@@ -5,6 +5,7 @@ import cryptoControlIOAPI from './cryptoControlIOAPI'
 class CryptoModel {
     currentTab = 0
     listings = []
+    listingsWithPrices = []
     news = []
     numOfCryptos = 0
     currency = "EUR"
@@ -14,6 +15,9 @@ class CryptoModel {
     menuOpen = false
     sortMenuAnchorEl = null
     sortMenuOpen = false
+    autoCompleteSuggestions = []
+    suggestions = []  
+    autoCompleteValue = ""
 
     fetchNews = () => {
         return cryptoControlIOAPI.fetchNews().then(response => {
@@ -21,9 +25,17 @@ class CryptoModel {
         })
     }
 
-    listingsWithPrices = () => {
+    fetchListings = () => {
         return cryptoSupermarketBackendAPI
-        .listingsWithPrices(this.currency, this.start, this.limit)       
+        .listings().then(response => {
+            this.listings.replace(response.data.data)
+            this.listings.forEach(l => this.autoCompleteSuggestions.push({label: l.symbol}))
+        })      
+    }
+
+    fetchListingsWithPrices = () => {
+        return cryptoSupermarketBackendAPI
+        .listingsWithPrices(this.currency, this.autoCompleteValue, this.start, this.limit)       
     }
 
     nextPage = () => {
@@ -32,9 +44,9 @@ class CryptoModel {
            return     
         }
         this.start = newStart
-        return this.listingsWithPrices()
+        return this.fetchListingsWithPrices()
         .then((response) => {
-            this.listings = this.listings.concat(response.data.data)
+            this.listingsWithPrices = this.listingsWithPrices.concat(response.data.data)
         })
         .catch(function (error) {
             console.log(error);
@@ -44,9 +56,9 @@ class CryptoModel {
     reload = () => {
         this.start = 1
         this.limit = 20
-        return this.listingsWithPrices()
+        return this.fetchListingsWithPrices()
         .then((response) => {
-            this.listings.replace(response.data.data)
+            this.listingsWithPrices.replace(response.data.data)
             this.numOfCryptos = response.data.metadata.num_cryptocurrencies
         })
         .catch(function (error) {
@@ -61,11 +73,14 @@ class CryptoModel {
 
 decorate(CryptoModel, {
     currentTab: observable,
-    listings: observable, 
+    listings: observable,
+    listingsWithPrices: observable, 
     news: observable,
     currency: observable, 
     menuOpen: observable,
     sortMenuOpen: observable,
+    suggestions: observable,
+    autoCompleteValue: observable,
     reload: action,
     nextPage: action,
     handleTabChange: action})

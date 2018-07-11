@@ -28,7 +28,7 @@ const MarketPricesList = observer(
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {this.props.cryptoModel.listings.map(crypto => crypto.quotes[this.props.cryptoModel.currency] &&
+                    {this.props.cryptoModel.listingsWithPrices.map(crypto => crypto.quotes[this.props.cryptoModel.currency] &&
                         <TableRow key={crypto.id}>
                             <TableCell component="th" scope="row">
                                 <ListItem>

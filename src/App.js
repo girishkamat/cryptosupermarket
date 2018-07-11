@@ -9,7 +9,6 @@ import ChatIcon from '@material-ui/icons/Chat';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -19,14 +18,7 @@ import Menu from '@material-ui/core/Menu';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import MarketPricesList from './MarketPricesList';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import purple from '@material-ui/core/colors/purple';
-import Autosuggest from 'react-autosuggest';
 import TextField from '@material-ui/core/TextField';
-import match from 'autosuggest-highlight/match';
-import parse from 'autosuggest-highlight/parse';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 
 const styles = theme => ({
   root: {
@@ -61,97 +53,15 @@ const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
   },
-  container: {
-    flexGrow: 1,
-    position: 'relative'
-  },
-  suggestionsContainerOpen: {
-    position: 'absolute',
-    zIndex: 1,
-    marginTop: theme.spacing.unit,
-    left: 0,
-    right: 0,
-  },
-  suggestion: {
-    display: 'block',
-  },
-  suggestionsList: {
-    margin: 0,
-    padding: 0,
-    listStyleType: 'none',
-  },
-  input: {
+  searchTextField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
     background: 'white'
   }
 });
 
 const theme = createMuiTheme({
 });
-
-function renderInput(inputProps) {
-  const { classes, ref, ...other } = inputProps;
-
-  return (
-    <TextField
-      fullWidth
-      InputProps={{
-        inputRef: ref,
-        classes: {
-          input: classes.input,
-        },
-        ...other,
-      }}
-    />
-  );
-}
-
-function getSuggestions(suggestions, value) {
-  console.log(suggestions)
-  const inputValue = value.trim().toLowerCase();
-  const inputLength = inputValue.length;
-  let count = 0;
-
-  return inputLength === 0
-    ? []
-    : suggestions.filter(suggestion => {
-        const keep =
-          count < 5 && suggestion.label.toLowerCase().slice(0, inputLength) === inputValue;
-
-        if (keep) {
-          count += 1;
-        }
-
-        return keep;
-      });
-}
-
-function renderSuggestionsContainer(options) {
-  const { containerProps, children } = options;
-
-  return (
-    <Paper {...containerProps} square>
-      {children}
-    </Paper>
-  );
-}
-
-function getSuggestionValue(suggestion) {
-  return suggestion.label;
-}
-
-function renderSuggestion(suggestion, { query, isHighlighted }) {
-  const matches = match(suggestion.label, query);
-  const parts = parse(suggestion.label, matches);
-  console.log(suggestion)
-  return (
-    <ListItem>
-       <ListItemIcon>
-          <img alt={suggestion.symbol} src={`https://s2.coinmarketcap.com/static/img/coins/16x16/${suggestion.id}.png`} />
-       </ListItemIcon>
-      <ListItemText primary={suggestion.label} secondary={suggestion.symbol} />
-    </ListItem>
-  );
-}
 
 const App = observer(
 
@@ -195,16 +105,9 @@ const App = observer(
       this.props.cryptoModel.sortMenuOpen = false
     };
 
-    handleSuggestionsFetchRequested = ({ value }) => {
-      this.props.cryptoModel.suggestions = getSuggestions(this.props.cryptoModel.autoCompleteSuggestions,value);
-    };
-
-    handleSuggestionsClearRequested = () => {
-      this.props.cryptoModel.suggestions.clear();
-    };
-
-    handleChange = (event, { newValue }) => {
-      this.props.cryptoModel.autoCompleteValue = newValue;
+    handleSearchChange = event => {
+      this.props.cryptoModel.searchValue = event.target.value
+      this.props.cryptoModel.reload()
     };
 
     render() {
@@ -247,27 +150,17 @@ const App = observer(
                     </Menu>
                   </div>
                   <div className={classes.flex}>
-                    <Autosuggest
-                        theme={{
-                          container: classes.container,
-                          suggestionsContainerOpen: classes.suggestionsContainerOpen,
-                          suggestionsList: classes.suggestionsList,
-                          suggestion: classes.suggestion,
-                        }}
-                        renderInputComponent={renderInput}
-                        suggestions={this.props.cryptoModel.suggestions}
-                        onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
-                        onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
-                        renderSuggestionsContainer={renderSuggestionsContainer}
-                        getSuggestionValue={getSuggestionValue}
-                        renderSuggestion={renderSuggestion}
-                        inputProps={{
-                          classes,
-                          placeholder: 'type to filter....',
-                          value: this.props.cryptoModel.autoCompleteValue,
-                          onChange: this.handleChange,
-                        }}
-                      />
+                  <TextField
+                    id="search"
+                    className={classes.searchTextField}
+                    value={this.props.cryptoModel.searchValue}
+                    onChange={this.handleSearchChange}
+                    margin="normal"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    fullWidth
+                  />
                   </div>
                   <div>
                     <IconButton

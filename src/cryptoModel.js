@@ -15,9 +15,7 @@ class CryptoModel {
     menuOpen = false
     sortMenuAnchorEl = null
     sortMenuOpen = false
-    autoCompleteSuggestions = []
-    suggestions = []  
-    autoCompleteValue = ""
+    searchValue = ""
 
     fetchNews = () => {
         return cryptoControlIOAPI.fetchNews().then(response => {
@@ -29,13 +27,12 @@ class CryptoModel {
         return cryptoSupermarketBackendAPI
         .listings().then(response => {
             this.listings.replace(response.data.data)
-            this.listings.forEach(l => this.autoCompleteSuggestions.push({label: l.name, id: l.id, symbol: l.symbol}))
         })      
     }
 
     fetchListingsWithPrices = () => {
         return cryptoSupermarketBackendAPI
-        .listingsWithPrices(this.currency, this.autoCompleteValue, this.start, this.limit)       
+        .listingsWithPrices(this.currency, this.searchValue, this.start, this.limit)       
     }
 
     nextPage = () => {
@@ -46,7 +43,9 @@ class CryptoModel {
         this.start = newStart
         return this.fetchListingsWithPrices()
         .then((response) => {
-            this.listingsWithPrices = this.listingsWithPrices.concat(response.data.data)
+            if(response.data.data != null && response.data.data.length > 0) {
+                this.listingsWithPrices = this.listingsWithPrices.concat(response.data.data)
+            }
         })
         .catch(function (error) {
             console.log(error);
@@ -79,8 +78,7 @@ decorate(CryptoModel, {
     currency: observable, 
     menuOpen: observable,
     sortMenuOpen: observable,
-    suggestions: observable,
-    autoCompleteValue: observable,
+    searchValue: observable,
     reload: action,
     nextPage: action,
     handleTabChange: action})

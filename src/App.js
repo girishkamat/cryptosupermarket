@@ -19,6 +19,7 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import MarketPricesList from './MarketPricesList';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
 
 const styles = theme => ({
   root: {
@@ -53,7 +54,12 @@ const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
   },
-  searchTextField: {
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    background: 'white'
+  },
+  select: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     background: 'white'
@@ -80,24 +86,11 @@ const App = observer(
       }
     };
 
-    handleCurrencyMenu = event => {
-      this.props.cryptoModel.anchorEl = event.currentTarget
-      this.props.cryptoModel.menuOpen = true
-
-    };
+    
 
     handleSortMenu = event => {
       this.props.cryptoModel.sortMenuAnchorEl = event.currentTarget
       this.props.cryptoModel.sortMenuOpen = true
-    };
-
-    handleCurrencyMenuClose = event => {
-      this.props.cryptoModel.anchorEl = null
-      this.props.cryptoModel.menuOpen = false
-      if(event.currentTarget.textContent) {
-        this.props.cryptoModel.currency = event.currentTarget.textContent
-        this.props.cryptoModel.reload()
-      }
     };
 
     handleSortMenuClose = event => {
@@ -107,6 +100,11 @@ const App = observer(
 
     handleSearchChange = event => {
       this.props.cryptoModel.searchValue = event.target.value
+      this.props.cryptoModel.reload()
+    };
+
+    handleCurrencyChange = event => {
+      this.props.cryptoModel.currency = event.target.value
       this.props.cryptoModel.reload()
     };
 
@@ -150,45 +148,29 @@ const App = observer(
                     </Menu>
                   </div>
                   <div className={classes.flex}>
-                  <TextField
-                    id="search"
-                    className={classes.searchTextField}
-                    value={this.props.cryptoModel.searchValue}
-                    onChange={this.handleSearchChange}
-                    margin="normal"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    fullWidth
-                  />
+                    <TextField
+                      id="search"
+                      className={classes.textField}
+                      value={this.props.cryptoModel.searchValue}
+                      onChange={this.handleSearchChange}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      fullWidth
+                    />
                   </div>
                   <div>
-                    <IconButton
-                      aria-owns={this.props.cryptoModel.menuOpen ? 'menu-appbar' : null}
-                      aria-haspopup="true"
-                      onClick={this.handleCurrencyMenu}
-                      color="inherit"
+                    <Select
+                      value={this.props.cryptoModel.currency}
+                      onChange={this.handleCurrencyChange}
+                      name="currency"
+                      className={classes.select}
+                      fullWidth
                     >
-                      <FilterListIcon />
-                    </IconButton>
-                    <Menu
-                      id="menu-appbar"
-                      anchorEl={this.props.cryptoModel.anchorEl}
-                      anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                      }}
-                      transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                      }}
-                      open={this.props.cryptoModel.menuOpen}
-                      onClose={this.handleCurrencyMenuClose}
-                    >
-                      <MenuItem onClick={this.handleCurrencyMenuClose}>USD</MenuItem>
-                      <MenuItem onClick={this.handleCurrencyMenuClose}>GBP</MenuItem>
-                      <MenuItem onClick={this.handleCurrencyMenuClose}>EUR</MenuItem>
-                    </Menu>
+                      <MenuItem value="USD">USD</MenuItem>
+                      <MenuItem value="GBP">GBP</MenuItem>
+                      <MenuItem value="EUR">EUR</MenuItem>
+                    </Select>
                   </div>
                 </Toolbar>
               </AppBar>
@@ -197,7 +179,7 @@ const App = observer(
               </Paper>
             </div>
           }
-          {this.props.cryptoModel.currentTab === 1 && <Paper><NewsList {...this.props}/></Paper>
+          {this.props.cryptoModel.currentTab === 1 && <Paper><NewsList {...this.props} /></Paper>
           }
         </MuiThemeProvider>
       );

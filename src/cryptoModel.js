@@ -11,11 +11,9 @@ class CryptoModel {
     currency = "EUR"
     start = 1
     limit = 20
-    anchorEl = null
-    menuOpen = false
-    sortMenuAnchorEl = null
-    sortMenuOpen = false
     searchValue = ""
+    drawerOpen = false
+    sort = ""
 
     fetchNews = () => {
         return cryptoControlIOAPI.fetchNews().then(response => {
@@ -32,7 +30,7 @@ class CryptoModel {
 
     fetchListingsWithPrices = () => {
         return cryptoSupermarketBackendAPI
-        .listingsWithPrices(this.currency, this.searchValue, this.start, this.limit)       
+        .listingsWithPrices(this.currency, this.searchValue, this.sort, this.start, this.limit)       
     }
 
     nextPage = () => {
@@ -76,9 +74,8 @@ decorate(CryptoModel, {
     listingsWithPrices: observable, 
     news: observable,
     currency: observable, 
-    menuOpen: observable,
-    sortMenuOpen: observable,
     searchValue: observable,
+    drawerOpen: observable,
     reload: action,
     nextPage: action,
     handleTabChange: action})

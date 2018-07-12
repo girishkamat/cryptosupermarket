@@ -20,6 +20,15 @@ import MarketPricesList from './MarketPricesList';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import { ListItem } from '../node_modules/@material-ui/core';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import classNames from 'classnames';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import ListItemText from '@material-ui/core/ListItemText';
 
 const styles = theme => ({
   root: {
@@ -27,10 +36,6 @@ const styles = theme => ({
   },
   flex: {
     flex: 1,
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
   },
   valueUp: {
     color: 'green'
@@ -63,7 +68,72 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     background: 'white'
-  }
+  },
+  appFrame: {
+    zIndex: 1,
+    overflow: 'hidden',
+    position: 'relative',
+    display: 'flex',
+    width: '100%',
+  },
+  appBar: {
+    position: 'absolute',
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
+    width: `calc(100% - 240px)`,
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  'appBarShift-left': {
+    marginLeft: 240,
+  },
+  drawerPaper: {
+    position: 'relative',
+    width: 240,
+  },
+  drawerHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '0 8px',
+    ...theme.mixins.toolbar,
+  },
+  menuButton: {
+    marginLeft: 12,
+    marginRight: 20,
+  },
+  hide: {
+    display: 'none',
+  },
+  content: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  'content-left': {
+    marginLeft: -240,
+  },
+  contentShift: {
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  'contentShift-left': {
+    marginLeft: 0,
+  },
+  'contentShift-right': {
+    marginRight: 0,
+  },
 });
 
 const theme = createMuiTheme({
@@ -86,16 +156,12 @@ const App = observer(
       }
     };
 
-    
-
-    handleSortMenu = event => {
-      this.props.cryptoModel.sortMenuAnchorEl = event.currentTarget
-      this.props.cryptoModel.sortMenuOpen = true
+    handleDrawerOpen = () => {
+      this.props.cryptoModel.drawerOpen = true;
     };
 
-    handleSortMenuClose = event => {
-      this.props.cryptoModel.sortMenuAnchorEl = null
-      this.props.cryptoModel.sortMenuOpen = false
+    handleDrawerClose = () => {
+      this.props.cryptoModel.drawerOpen = false;
     };
 
     handleSearchChange = event => {
@@ -108,8 +174,22 @@ const App = observer(
       this.props.cryptoModel.reload()
     };
 
+    toggleDrawer = open => {
+      this.props.cryptoModel.drawerOpen = open
+    };
+
+    handleDrawerItemClick = (item) => {
+      var sortOrder = "desc";
+      if(this.props.cryptoModel.sort.indexOf(item) != -1 && 
+          this.props.cryptoModel.sort.indexOf("desc") != -1) {
+        sortOrder = "asc"
+      }
+      this.props.cryptoModel.sort = item + " " + sortOrder;
+      this.props.cryptoModel.reload()
+    };
+
     render() {
-      const { classes } = this.props;
+      const { classes, theme } = this.props;
       return (
         <MuiThemeProvider theme={theme}>
           <AppBar position="static">
@@ -123,29 +203,21 @@ const App = observer(
             </Tabs>
           </AppBar>
           {this.props.cryptoModel.currentTab === 0 &&
-            <div>
-              <AppBar position="static">
-                <Toolbar>
+            <div className={classes.appFrame}>
+              <AppBar className={classNames(classes.appBar, {
+                [classes.appBarShift]: this.props.cryptoModel.drawerOpen,
+                [classes[`appBarShift-left`]]: this.props.cryptoModel.drawerOpen,
+              })}>
+                <Toolbar disableGutters={!this.props.cryptoModel.drawerOpen}>
                   <div>
                     <IconButton
-                      aria-owns={this.props.cryptoModel.sortMenuOpen ? 'sort-menu' : null}
-                      className={classes.menuButton}
-                      aria-haspopup="true"
                       color="inherit"
-                      onClick={this.handleSortMenu}>
+                      aria-label="open drawer"
+                      onClick={this.handleDrawerOpen}
+                      className={classNames(classes.menuButton, this.props.cryptoModel.drawerOpen && classes.hide)}
+                    >
                       <MenuIcon />
                     </IconButton>
-                    <Menu
-                      id="sort-menu"
-                      anchorEl={this.props.cryptoModel.sortMenuAnchorEl}
-                      open={this.props.cryptoModel.sortMenuOpen}
-                      onClose={this.handleSortMenuClose}
-                    >
-                      <MenuItem onClick={this.handleSortMenuClose}>Sort Price</MenuItem>
-                      <MenuItem onClick={this.handleSortMenuClose}>Sort Change1h</MenuItem>
-                      <MenuItem onClick={this.handleSortMenuClose}>Sort Change24h</MenuItem>
-                      <MenuItem onClick={this.handleSortMenuClose}>Sort Change7d</MenuItem>
-                    </Menu>
                   </div>
                   <div className={classes.flex}>
                     <TextField
@@ -174,12 +246,50 @@ const App = observer(
                   </div>
                 </Toolbar>
               </AppBar>
-              <Paper style={{ maxHeight: 750, overflow: 'auto' }} onScroll={this.handleScroll.bind(this)}>
-                <MarketPricesList {...this.props} />
-              </Paper>
+              <Drawer variant="persistent"
+                anchor="left"
+                open={this.props.cryptoModel.drawerOpen}
+                classes={{
+                  paper: classes.drawerPaper,
+                }}>
+                <div className={classes.drawerHeader}>
+                  <IconButton onClick={this.handleDrawerClose}>
+                    {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                  </IconButton>
+                </div>
+                <List
+                  component="nav"
+                  subheader={<ListSubheader component="div">Sort By</ListSubheader>}
+                >
+                  <ListItem button onClick={() => this.handleDrawerItemClick('price')}>
+                    <ListItemText primary="Price" />
+                  </ListItem>
+                  <ListItem button onClick={() => this.handleDrawerItemClick('percentage1h')}>
+                    <ListItemText primary="Percentage Change1h" />
+                  </ListItem>
+                  <ListItem button onClick={() => this.handleDrawerItemClick('percentage24h')}>
+                    <ListItemText primary="Percentage Change24h" />
+                  </ListItem>
+                  <ListItem button onClick={() => this.handleDrawerItemClick('percentage7d')}>
+                    <ListItemText primary="Percentage Change7d" />
+                  </ListItem>
+                </List>
+              </Drawer>
+              <main
+                className={classNames(classes.content, classes[`content-left`], {
+                  [classes.contentShift]: this.props.cryptoModel.drawerOpen,
+                  [classes[`contentShift-left`]]: this.props.cryptoModel.drawerOpen,
+                })}
+              >
+                <div className={classes.drawerHeader} />
+                <Paper style={{ maxHeight: 750, overflow: 'auto' }} onScroll={this.handleScroll.bind(this)}>
+                  <MarketPricesList {...this.props} />
+                </Paper>
+              </main>
             </div>
           }
-          {this.props.cryptoModel.currentTab === 1 && <Paper><NewsList {...this.props} /></Paper>
+          {this.props.cryptoModel.currentTab === 1 &&
+            <Paper><NewsList {...this.props} /></Paper>
           }
         </MuiThemeProvider>
       );
@@ -191,4 +301,4 @@ App.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(App);
+export default withStyles(styles, { withTheme: true })(App);

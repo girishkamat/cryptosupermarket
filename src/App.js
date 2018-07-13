@@ -177,6 +177,7 @@ const App = observer(
     };
 
     handleDrawerItemClick = (item) => {
+      this.toggleDrawer(false)
       var sortOrder = "desc";
       if(this.props.cryptoModel.sort.indexOf(item) != -1 && 
           this.props.cryptoModel.sort.indexOf("desc") != -1) {

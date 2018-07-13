@@ -33,9 +33,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 const styles = theme => ({
   root: {
     flexGrow: 1,
-  },
-  flex: {
-    flex: 1,
+
   },
   valueUp: {
     color: 'green'
@@ -65,13 +63,13 @@ const styles = theme => ({
     background: 'white'
   },
   select: {
+    width: "70px",
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     background: 'white'
   },
   appFrame: {
     zIndex: 1,
-    overflow: 'hidden',
     position: 'relative',
     display: 'flex',
     width: '100%',
@@ -101,12 +99,12 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    padding: '0 8px',
+    padding: '0 0px',
     ...theme.mixins.toolbar,
   },
   menuButton: {
-    marginLeft: 12,
-    marginRight: 20,
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
   },
   hide: {
     display: 'none',
@@ -209,7 +207,6 @@ const App = observer(
                 [classes[`appBarShift-left`]]: this.props.cryptoModel.drawerOpen,
               })}>
                 <Toolbar disableGutters={!this.props.cryptoModel.drawerOpen}>
-                  <div>
                     <IconButton
                       color="inherit"
                       aria-label="open drawer"
@@ -218,8 +215,7 @@ const App = observer(
                     >
                       <MenuIcon />
                     </IconButton>
-                  </div>
-                  <div className={classes.flex}>
+       
                     <TextField
                       id="search"
                       className={classes.textField}
@@ -230,8 +226,6 @@ const App = observer(
                       }}
                       fullWidth
                     />
-                  </div>
-                  <div>
                     <Select
                       value={this.props.cryptoModel.currency}
                       onChange={this.handleCurrencyChange}
@@ -243,7 +237,6 @@ const App = observer(
                       <MenuItem value="GBP">GBP</MenuItem>
                       <MenuItem value="EUR">EUR</MenuItem>
                     </Select>
-                  </div>
                 </Toolbar>
               </AppBar>
               <Drawer variant="persistent"

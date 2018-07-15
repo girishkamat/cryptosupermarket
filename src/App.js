@@ -14,15 +14,12 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import NewsList from './newsList';
 import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import MarketPricesList from './MarketPricesList';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
 import { ListItem } from '../node_modules/@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -41,19 +38,6 @@ const styles = theme => ({
   valueDown: {
     color: 'red'
   },
-  card: {
-    minWidth: 400,
-    maxWidth: 700,
-    backgroundPosition: 'center',
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    marginLeft: 'auto',
-    marginRight: 'auto'
-  },
-  media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
   button: {
     margin: theme.spacing.unit,
   },
@@ -62,7 +46,7 @@ const styles = theme => ({
     marginRight: theme.spacing.unit,
     background: 'white'
   },
-  select: {
+  currencySelect: {
     width: "70px",
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
@@ -74,21 +58,21 @@ const styles = theme => ({
     display: 'flex',
     width: '100%',
   },
-  appBar: {
+  marketAppBar: {
     position: 'absolute',
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
-  appBarShift: {
+  marketAppBarShift: {
     width: `calc(100% - 240px)`,
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  'appBarShift-left': {
+  'marketAppBarShift-left': {
     marginLeft: 240,
   },
   drawerPaper: {
@@ -109,7 +93,7 @@ const styles = theme => ({
   hide: {
     display: 'none',
   },
-  content: {
+  marketContent: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     transition: theme.transitions.create('margin', {
@@ -117,20 +101,28 @@ const styles = theme => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
-  'content-left': {
+  'marketContent-left': {
     marginLeft: -240,
   },
-  contentShift: {
+  marketContentShift: {
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  'contentShift-left': {
+  'marketContentShift-left': {
     marginLeft: 0,
   },
-  'contentShift-right': {
-    marginRight: 0,
+  marketListTable: {
+    display: 'block',
+    overflowX: 'scroll',
+    width:'100%'
+  },
+  marketListTableHeaderCell: {
+    padding: '5px 10px'
+  },
+  marketListTableCell: {
+    padding: '0px'
   },
 });
 
@@ -154,14 +146,6 @@ const App = observer(
       }
     };
 
-    handleDrawerOpen = () => {
-      this.props.cryptoModel.drawerOpen = true;
-    };
-
-    handleDrawerClose = () => {
-      this.props.cryptoModel.drawerOpen = false;
-    };
-
     handleSearchChange = event => {
       this.props.cryptoModel.searchValue = event.target.value
       this.props.cryptoModel.reload()
@@ -172,12 +156,16 @@ const App = observer(
       this.props.cryptoModel.reload()
     };
 
-    toggleDrawer = open => {
-      this.props.cryptoModel.drawerOpen = open
+    handleDrawerOpen = () => {
+      this.props.cryptoModel.drawerOpen = true;
+    };
+
+    handleDrawerClose = () => {
+      this.props.cryptoModel.drawerOpen = false;
     };
 
     handleDrawerItemClick = (item) => {
-      this.toggleDrawer(false)
+      this.handleDrawerClose()
       var sortOrder = "desc";
       if(this.props.cryptoModel.sort.indexOf(item) != -1 && 
           this.props.cryptoModel.sort.indexOf("desc") != -1) {
@@ -188,7 +176,7 @@ const App = observer(
     };
 
     render() {
-      const { classes, theme } = this.props;
+      const { classes } = this.props;
       return (
         <MuiThemeProvider theme={theme}>
           <AppBar position="static">
@@ -203,9 +191,9 @@ const App = observer(
           </AppBar>
           {this.props.cryptoModel.currentTab === 0 &&
             <div className={classes.appFrame}>
-              <AppBar className={classNames(classes.appBar, {
-                [classes.appBarShift]: this.props.cryptoModel.drawerOpen,
-                [classes[`appBarShift-left`]]: this.props.cryptoModel.drawerOpen,
+              <AppBar className={classNames(classes.marketAppBar, {
+                [classes.marketAppBarShift]: this.props.cryptoModel.drawerOpen,
+                [classes[`marketAppBarShift-left`]]: this.props.cryptoModel.drawerOpen,
               })}>
                 <Toolbar disableGutters={!this.props.cryptoModel.drawerOpen}>
                     <IconButton
@@ -231,7 +219,7 @@ const App = observer(
                       value={this.props.cryptoModel.currency}
                       onChange={this.handleCurrencyChange}
                       name="currency"
-                      className={classes.select}
+                      className={classes.currencySelect}
                       fullWidth
                     >
                       <MenuItem value="USD">USD</MenuItem>
@@ -270,9 +258,9 @@ const App = observer(
                 </List>
               </Drawer>
               <main
-                className={classNames(classes.content, classes[`content-left`], {
-                  [classes.contentShift]: this.props.cryptoModel.drawerOpen,
-                  [classes[`contentShift-left`]]: this.props.cryptoModel.drawerOpen,
+                className={classNames(classes.marketContent, classes[`marketContent-left`], {
+                  [classes.marketContentShift]: this.props.cryptoModel.drawerOpen,
+                  [classes[`marketContentShift-left`]]: this.props.cryptoModel.drawerOpen,
                 })}
               >
                 <div className={classes.drawerHeader} />

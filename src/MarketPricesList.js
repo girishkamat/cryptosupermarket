@@ -17,20 +17,21 @@ const MarketPricesList = observer(
         }
 
         render() {
+            const {classes} = this.props;
             return (<Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell numeric>Price</TableCell>
-                        <TableCell numeric>Change1h</TableCell>
-                        <TableCell numeric>Change24h</TableCell>
-                        <TableCell numeric>Change7d</TableCell>
+                        <TableCell classes={{root: classes.marketListTableHeaderCell}}>Name</TableCell>
+                        <TableCell classes={{root: classes.marketListTableHeaderCell}} numeric>Price</TableCell>
+                        <TableCell classes={{root: classes.marketListTableHeaderCell}} numeric>Change1h</TableCell>
+                        <TableCell classes={{root: classes.marketListTableHeaderCell}} numeric>Change24h</TableCell>
+                        <TableCell classes={{root: classes.marketListTableHeaderCell}} numeric>Change7d</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {this.props.cryptoModel.listingsWithPrices.map(crypto => crypto.quotes[this.props.cryptoModel.currency] &&
                         <TableRow key={crypto.id}>
-                            <TableCell component="th" scope="row">
+                            <TableCell classes={{root: classes.marketListTableCell}} component="td" scope="row">
                                 <ListItem>
                                     <ListItemIcon>
                                         <img alt={crypto.symbol} src={`https://s2.coinmarketcap.com/static/img/coins/32x32/${crypto.id}.png`} />
@@ -38,16 +39,18 @@ const MarketPricesList = observer(
                                     <ListItemText primary={crypto.name} secondary={crypto.symbol} />
                                 </ListItem>
                             </TableCell>
-                            <TableCell numeric className={this.valueUpDownClass(crypto.quotes[this.props.cryptoModel.currency].percent_change_24h)}>
-                                {crypto.quotes[this.props.cryptoModel.currency].price}
+                            <TableCell classes={{root: classes.marketListTableCell}} numeric >
+                                <div className={this.valueUpDownClass(crypto.quotes[this.props.cryptoModel.currency].percent_change_24h)}>{crypto.quotes[this.props.cryptoModel.currency].price}</div>
                             </TableCell>
-                            <TableCell numeric className={this.valueUpDownClass(crypto.quotes[this.props.cryptoModel.currency].percent_change_1h)}>
-                                {crypto.quotes[this.props.cryptoModel.currency].percent_change_1h}
+                            <TableCell classes={{root: classes.marketListTableCell}} numeric>
+                                <div className={this.valueUpDownClass(crypto.quotes[this.props.cryptoModel.currency].percent_change_1h)}>{crypto.quotes[this.props.cryptoModel.currency].percent_change_1h}</div>
                             </TableCell>
-                            <TableCell numeric className={this.valueUpDownClass(crypto.quotes[this.props.cryptoModel.currency].percent_change_24h)}>
-                                {crypto.quotes[this.props.cryptoModel.currency].percent_change_24h}
+                            <TableCell classes={{root: classes.marketListTableCell}} numeric>
+                                <div className={this.valueUpDownClass(crypto.quotes[this.props.cryptoModel.currency].percent_change_24h)}>{crypto.quotes[this.props.cryptoModel.currency].percent_change_24h}</div>
                             </TableCell>
-                            <TableCell numeric className={this.valueUpDownClass(crypto.quotes[this.props.cryptoModel.currency].percent_change_7d)}>{crypto.quotes[this.props.cryptoModel.currency].percent_change_7d}</TableCell>
+                            <TableCell classes={{root: classes.marketListTableCell}} numeric>
+                                <div className={this.valueUpDownClass(crypto.quotes[this.props.cryptoModel.currency].percent_change_7d)}>{crypto.quotes[this.props.cryptoModel.currency].percent_change_7d}</div>
+                            </TableCell>
                         </TableRow>)}
                 </TableBody>
             </Table>)
